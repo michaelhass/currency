@@ -14,7 +14,7 @@
 		7E4F675324700A8B00FD2F94 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7E4F675224700A8B00FD2F94 /* Preview Assets.xcassets */; };
 		7E4F675624700A8B00FD2F94 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7E4F675424700A8B00FD2F94 /* LaunchScreen.storyboard */; };
 		7E4F676124700A8B00FD2F94 /* CurrencyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E4F676024700A8B00FD2F94 /* CurrencyTests.swift */; };
-		7EFD79BD2470129600670AF2 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EFD79BC2470129600670AF2 /* File.swift */; };
+		7EFD79BD2470129600670AF2 /* FluxCoreTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EFD79BC2470129600670AF2 /* FluxCoreTypes.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -39,7 +39,7 @@
 		7E4F675C24700A8B00FD2F94 /* CurrencyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CurrencyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7E4F676024700A8B00FD2F94 /* CurrencyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyTests.swift; sourceTree = "<group>"; };
 		7E4F676224700A8B00FD2F94 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		7EFD79BC2470129600670AF2 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
+		7EFD79BC2470129600670AF2 /* FluxCoreTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FluxCoreTypes.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -121,7 +121,7 @@
 		7EFD79BB2470124100670AF2 /* Flux */ = {
 			isa = PBXGroup;
 			children = (
-				7EFD79BC2470129600670AF2 /* File.swift */,
+				7EFD79BC2470129600670AF2 /* FluxCoreTypes.swift */,
 			);
 			path = Flux;
 			sourceTree = "<group>";
@@ -250,7 +250,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7E4F674A24700A8A00FD2F94 /* AppDelegate.swift in Sources */,
-				7EFD79BD2470129600670AF2 /* File.swift in Sources */,
+				7EFD79BD2470129600670AF2 /* FluxCoreTypes.swift in Sources */,
 				7E4F674C24700A8A00FD2F94 /* SceneDelegate.swift in Sources */,
 				7E4F674E24700A8A00FD2F94 /* ContentView.swift in Sources */,
 			);

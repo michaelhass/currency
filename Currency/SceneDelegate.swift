@@ -9,9 +9,14 @@
 import UIKit
 import SwiftUI
 
+struct AppState {
+
+}
+
 final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
+    private var store: Store<AppState>?
 
     func scene(_ scene: UIScene,
                willConnectTo session: UISceneSession,
