@@ -63,7 +63,6 @@ final class Store<State>: ObservableObject {
 
     private lazy var dispatchFunction: DispatchFunction = {
         let defaultDispatch: DispatchFunction = { [weak self] action in
-            print("--- dispatch")
             guard let self = self else { return }
             self.state = self.reducer(self.state, action)
         }
@@ -81,8 +80,8 @@ extension Store {
     static func createLoggerMiddleware<T>() -> Middleware<T> {
         return { dispatch, state in
             return { action in
-                print("[LOG]: Performed action: \(action)")
-                print("[LOG]: Current state: \(state())")
+                print("[LOG] - performed action: \(action)")
+                print("[LOG] - current state: \(state())")
                 print()
                 dispatch(action)
             }
@@ -94,7 +93,6 @@ extension Store {
         return { dispatch, state in
             return { action in
                 if let thunk = action as? Thunk<T> {
-                    print("THUNK")
                     thunk.body(dispatch, state)
                 } else {
                     dispatch(action)
