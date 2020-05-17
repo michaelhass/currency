@@ -11,3 +11,9 @@ import Foundation
 struct CurrencyList: Codable, Equatable {
     let currencies: [String: String]
 }
+
+struct CurrencyIdentifier: Codable, Equatable, Identifiable {
+    var id: String { abbr }
+    let abbr: String
+    let name: String
+}

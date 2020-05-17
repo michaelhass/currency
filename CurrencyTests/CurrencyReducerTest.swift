@@ -19,7 +19,7 @@ class CurrencyReducerTest: XCTestCase {
         // Request state should have changed
         XCTAssertTrue(updatedState.requestState == .some(.fetching(.currencyList)))
         // Everything else should equal initial state
-        XCTAssertTrue(updatedState.currencyList == initialState.currencyList)
+        XCTAssertTrue(updatedState.currencies == initialState.currencies)
         XCTAssertTrue(updatedState.currencyQuotes == initialState.currencyQuotes)
     }
 
@@ -31,21 +31,21 @@ class CurrencyReducerTest: XCTestCase {
         // Request state should have changed
         XCTAssertTrue(updatedState.requestState == .some(.error(Error())))
         // Everything else should equal initial state
-        XCTAssertTrue(updatedState.currencyList == initialState.currencyList)
+        XCTAssertTrue(updatedState.currencies == initialState.currencies)
         XCTAssertTrue(updatedState.currencyQuotes == initialState.currencyQuotes)
-
     }
 
     func testSetCurrenciesAction() throws {
         let initialState = CurrencyState()
-        let currencies: [String: String] = ["JPY": "Japanese Yen"]
+        let currencies: [String: String] = ["ABR3": "3", "ABR1": "1", "ABR2": "2"]
         let currencyList: CurrencyList = .init(currencies: currencies)
         let setCurrenciesAction = CurrencyActions.SetCurrencies(endpoint: .currencyList, list: currencyList)
         let updatedState = currencyReducer(state: initialState, action: setCurrenciesAction)
 
         XCTAssertTrue(updatedState.requestState == .some(.success(setCurrenciesAction.endpoint)))
-        XCTAssertTrue(updatedState.currencyList == currencyList)
-
+        let sortedCurrencies = updatedState.currencies.map(\.abbr)
+        let expectationSorted = ["ABR1", "ABR2", "ABR3"]
+        XCTAssertTrue(sortedCurrencies == expectationSorted)
         XCTAssertTrue(updatedState.currencyQuotes == initialState.currencyQuotes)
     }
 
@@ -61,7 +61,7 @@ class CurrencyReducerTest: XCTestCase {
         XCTAssertTrue(updatedState.requestState == .some(.success(liveQuotesAction.endpoint)))
         XCTAssertTrue(updatedState.currencyQuotes == currencyQuotes)
 
-        XCTAssertTrue(updatedState.currencyList == initialState.currencyList)
+        XCTAssertTrue(updatedState.currencies == initialState.currencies)
     }
 }
 

@@ -19,7 +19,12 @@ func currencyReducer(state: CurrencyState, action: Action) -> CurrencyState {
         state.requestState = .error(errorAction.error)
     case let successAction as CurrencyActions.SetCurrencies:
         state.requestState = .success(successAction.endpoint)
-        state.currencyList = successAction.list
+        state.currencies = successAction.list.currencies
+            .map { element in
+                .init(abbr: element.key, name: element.value)
+            }.sorted { (lhs, rhs) in
+                lhs.abbr < rhs.abbr
+            }
     case let successAction as CurrencyActions.SetLiveQuotes:
         state.requestState = .success(successAction.endpoint)
         state.currencyQuotes = successAction.quotes

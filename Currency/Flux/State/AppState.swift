@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct AppState {
+struct AppState: Equatable {
     var currencyState: CurrencyState
 
     static var initial: AppState {

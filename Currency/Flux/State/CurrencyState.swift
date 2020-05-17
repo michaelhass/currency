@@ -8,10 +8,13 @@
 
 import Foundation
 
-struct CurrencyState {
-    var currencyList: CurrencyList?
+struct CurrencyState: Equatable {
+
     var requestState: RequestState = .idle
     var currencyQuotes: CurrencyQuotes?
+    var currencies: [CurrencyIdentifier] = []
+    var selectedCurrency: CurrencyIdentifier?
+    var amount: Float?
 }
 
 extension CurrencyState {
