@@ -19,10 +19,13 @@ final class CurrencyServiceMocking: URLProtocol {
         }
     }
 
-    static func setTestData(testData: [URL: String]) {
+    static func setTestData(testData: [CurrencyService.Endpoint: String], baseURL: URL) {
         setTestData(testData:
-            testData.compactMapValues({ name in
-                Bundle.main.url(forResource: name, withExtension: ".json")
+            testData.reduce(into: [URL: URL](), { (result, element) in
+                guard let key = element.key.relativePath.map(baseURL.appendingPathComponent(_:)) else {
+                    return
+                }
+                result[key] = Bundle.main.url(forResource: element.value, withExtension: ".json")
             })
         )
     }
@@ -45,10 +48,18 @@ final class CurrencyServiceMocking: URLProtocol {
             client?.urlProtocolDidFinishLoading(self)
         }
 
-        guard let url = request.url, let data = CurrencyServiceMocking.testData[url] else {
-            return
+        _ = request.url.flatMap { url -> URL? in
+            // Remove query items
+            var components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+            components?.queryItems = nil
+            return components?.url
+        }.flatMap { url -> Data? in
+            CurrencyServiceMocking.testData[url]
+        }.map { data -> Void in
+            client?.urlProtocol(self, didLoad: data)
+            client?.urlProtocol(self, didReceive: HTTPURLResponse(), cacheStoragePolicy: .allowedInMemoryOnly)
+            return Void()
         }
-        client?.urlProtocol(self, didLoad: data)
     }
 
     override func stopLoading() {

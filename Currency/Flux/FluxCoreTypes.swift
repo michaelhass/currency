@@ -81,10 +81,13 @@ extension Store {
     static func createLoggerMiddleware<T>() -> Middleware<T> {
         return { dispatch, state in
             return { action in
+                dispatch(action)
+                #if DEBUG
+                print("[LOG] - \(Date())")
                 print("[LOG] - performed action: \(action)")
                 print("[LOG] - current state: \(state())")
                 print()
-                dispatch(action)
+                #endif
             }
         }
     }

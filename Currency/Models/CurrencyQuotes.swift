@@ -9,4 +9,7 @@
 import Foundation
 
 struct CurrencyQuotes: Codable {
+    let source: String
+    let timestamp: TimeInterval
+    let quotes: [String: String]
 }

@@ -10,13 +10,13 @@ import Foundation
 
 struct CurrencyActions {
 
-    private func decoder<T: Decodable>(for type: T.Type) -> CurrencyService.DecodingHandler<T> {
+    private static func decoder<T: Decodable>(for type: T.Type) -> CurrencyService.DecodingHandler<T> {
         return { data, _ in
             try JSONDecoder().decode(T.self, from: data)
         }
     }
 
-    func requestCurrencyList<State>(service: CurrencyService) -> Thunk<State> {
+    static func requestCurrencyList(service: CurrencyService) -> Thunk<AppState> {
         .init { (dispatch, state) in
             let endpoint = CurrencyService.Endpoint.currencyList
             dispatch(SetFetching(endoint: endpoint))
@@ -25,7 +25,7 @@ struct CurrencyActions {
                     guard case .failure(let error) = completed else { return }
                     dispatch(ShowError(error: error))
                 }, receiveValue: { list in
-                    dispatch(SetCurrencyList(list: list))
+                    dispatch(SetCurrencyList(endpoint: endpoint, list: list))
                 })
             }.map(service.store(cancellable:))
         }
@@ -40,6 +40,7 @@ struct CurrencyActions {
     }
 
     struct SetCurrencyList: Action {
+        let endpoint: CurrencyService.Endpoint
         let list: CurrencyList
     }
 }

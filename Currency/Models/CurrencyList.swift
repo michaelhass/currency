@@ -9,4 +9,5 @@
 import Foundation
 
 struct CurrencyList: Codable {
+    let currencies: [String: String]
 }

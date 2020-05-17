@@ -9,5 +9,7 @@
 import Foundation
 
 func appReducer(state: AppState, action: Action) -> AppState {
+    var state = state
+    state.currencyState = currencyReducer(state: state.currencyState, action: action)
     return state
 }

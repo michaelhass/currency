@@ -9,10 +9,6 @@
 import UIKit
 import SwiftUI
 
-struct Shared {
-    let currencyService: CurrencyService
-}
-
 private(set) var shared: Shared?
 
 final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -27,11 +23,19 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let baseURL = URL(string: "https://api.currencylayer.com/")!
         // Place your api key here
         let apiKey = "fc4930a1480d39ef7b55f679e98a1afa"
-        let config = URLSessionConfiguration.ephemeral
-        config.protocolClasses = [CurrencyServiceMocking.self]
-        let session = URLSession(configuration: config)
-        let currencyService = CurrencyService(baseURL: baseURL, apiKey: apiKey, session: session)
-        shared = .init(currencyService: currencyService)
+
+        #if DEBUG
+        let currencyData: [CurrencyService.Endpoint: String] = [
+            .currencyList: "currencies",
+            .liveRates: "usd_rates"
+        ]
+        let testData = TestData(currencyService: currencyData)
+        shared = .testing(baseURL: baseURL, testData: testData)
+
+        #else
+        shared = .default(baseURL: baseURL, apiKey: apiKey)
+        #endif
+
     }
 
     func scene(_ scene: UIScene,
@@ -42,6 +46,9 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                       reducer: appReducer(state:action:),
                       middleware: [StoreType.createThunkMiddleWare(), StoreType.createLoggerMiddleware()])
 
+        _ = shared.map(\.currencyService)
+            .map(CurrencyActions.requestCurrencyList(service:))
+            .map(store!.dispatch(action:))
         // Create the SwiftUI view that provides the window contents.
         let contentView = ContentView()
 

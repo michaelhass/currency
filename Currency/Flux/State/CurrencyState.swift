@@ -11,7 +11,7 @@ import Foundation
 struct CurrencyState {
     var currencyList: CurrencyList?
     var requestState: RequestState = .idle
-    var currencyRates: CurrencyRates?
+    var currencyRates: CurrencyQuotes?
 
     enum RequestState {
         case idle
