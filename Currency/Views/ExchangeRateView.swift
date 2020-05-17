@@ -11,11 +11,13 @@ import SwiftUI
 struct ExchangeRateView: View {
 
     @EnvironmentObject var store: Store<AppState>
-    @State private var currencies: [CurrencyIdentifier] = []
+
     @State private var showPicker: Bool = false
     @State private var selectedCurrency: CurrencyIdentifier?
     @State private var attributes: Attributes = .init(currencyState: nil)
-    @State private var amount: Float?
+
+    @State private var currencies: [CurrencyIdentifier] = []
+    @State private var results: [ExchangeResult] = []
 
     // MARK: View properties
 
@@ -35,6 +37,7 @@ struct ExchangeRateView: View {
                 .map(self.store.dispatch(action:))
         }.onReceive(store.$state) { state in
             self.currencies = state.currencyState.currencies
+            self.results = state.currencyState.result
             self.attributes = Attributes(currencyState: state.currencyState)
         }
     }
@@ -42,8 +45,8 @@ struct ExchangeRateView: View {
     func content() -> some View {
         ZStack {
             List {
-                ForEach(0..<10) { _ in
-                    Text("Test")
+                ForEach(self.results, id: \.id) { (result: ExchangeResult) in
+                    Text("\(result.currency.abbr):  \(result.exchangeAmount)")
                 }
             }.listStyle(PlainListStyle()).gesture(DragGesture().onChanged({ _  in
                 UIApplication.shared.dismissKeyboard()
@@ -56,7 +59,8 @@ struct ExchangeRateView: View {
 
     func header() -> some View {
         VStack {
-            InputForm(observer: Observer())
+            InputForm(observer: Observer(dispatch: store.dispatch(action:),
+                                         selectedCurrency: self.selectedCurrency))
 
             HStack {
                 Button(selectedCurrency?.abbr ?? "Select currency") {
@@ -68,14 +72,19 @@ struct ExchangeRateView: View {
                         self.selectedCurrency = currency
                         // dispatch
                         self.showPicker = false
+
+                        self.store.dispatch(action: CurrencyActions.SetSelectedCurrency(currency: currency))
+
+                        shared
+                            .map(\.currencyService)
+                            .map(CurrencyActions.requestRates(service:))
+                            .map(self.store.dispatch(action:))
+
                     }
                 }
 
                 Spacer()
 
-                Button("Send") {
-                    UIApplication.shared.dismissKeyboard()
-                }
                 .disabled(attributes.isSendDisabled)
             }.padding(0) // Remove padding from HStack
         }
@@ -113,7 +122,7 @@ extension ExchangeRateView {
         }
 
         var isSendDisabled: Bool {
-            currencyState?.amount == nil || currencyState?.selectedCurrency == nil
+            isCurrencySelectDisabled || currencyState?.selectedCurrency == nil
         }
 
         var message: String {
@@ -129,12 +138,21 @@ extension ExchangeRateView {
     }
 
     private struct Observer: InputFormObserver {
+        private let dispatch: DispatchFunction
+        private let selectedCurrency: CurrencyIdentifier?
+
+        init(dispatch: @escaping DispatchFunction,
+             selectedCurrency: CurrencyIdentifier?) {
+            self.selectedCurrency = selectedCurrency
+            self.dispatch = dispatch
+        }
+
         func editingStarted() {
             // Do nothing
         }
 
-        func editingEnded() {
-
+        func editingEnded(text: String) {
+            requestRates(amountText: text)
         }
 
         func editingCanceled() {
@@ -142,7 +160,18 @@ extension ExchangeRateView {
         }
 
         func textChanged(text: String) {
+            requestRates(amountText: text)
+        }
 
+        private func requestRates(amountText: String) {
+            Float(amountText)
+                .map(CurrencyActions.SetAmount.init(amount:))
+                .map(dispatch)
+
+            shared
+                .map(\.currencyService)
+                .map { CurrencyActions.requestRates(service: $0) }
+                .map(dispatch)
         }
     }
 }

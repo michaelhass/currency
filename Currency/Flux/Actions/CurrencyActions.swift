@@ -19,6 +19,10 @@ struct CurrencyActions {
     static func requestCurrencies(service: CurrencyService) -> Thunk<AppState> {
         .init { (dispatch, state) in
             let endpoint = CurrencyService.Endpoint.currencyList
+            if case .fetching(endpoint) = state().currencyState.requestState {
+                return
+            }
+
             dispatch(SetFetching(endoint: endpoint))
             service.request(endpoint, decode: self.decoder(for: CurrencyList.self)).map {
                 $0.sink(receiveCompletion: {  completed in
@@ -31,18 +35,33 @@ struct CurrencyActions {
         }
     }
 
-    static func requestQuotes(service: CurrencyService) -> Thunk<AppState> {
+    static func requestRates(service: CurrencyService) -> Thunk<AppState> {
+
         .init { (dispatch, state) in
+
+            let currencyState: CurrencyState = state().currencyState
             let endpoint = CurrencyService.Endpoint.liveQuotes
-            dispatch(SetFetching(endoint: endpoint))
-            service.request(endpoint, decode: self.decoder(for: CurrencyQuotes.self)).map {
-                $0.sink(receiveCompletion: {  completed in
-                    guard case .failure(let error) = completed else { return }
-                    dispatch(ShowError(error: error))
-                }, receiveValue: { quotes in
-                    dispatch(SetLiveQuotes(endpoint: endpoint, quotes: quotes))
-                })
-            }.map(service.store(cancellable:))
+
+            if case .fetching(endpoint) = currencyState.requestState {
+                return
+            }
+
+            if currencyState.quotesTimestamp.map({ !$0.isOlderThan(minutes: 30) }) ?? false {
+                dispatch(UpdateRates())
+
+            } else { // Request new qupotes
+                dispatch(SetFetching(endoint: endpoint))
+                service.request(endpoint, decode: self.decoder(for: CurrencyQuotes.self)).map {
+                    $0.sink(receiveCompletion: {  completed in
+                        guard case .failure(let error) = completed else { return }
+                        dispatch(ShowError(error: error))
+                    }, receiveValue: { quotes in
+                        let timestamp = Date().timeIntervalSince1970
+                        dispatch(SetLiveQuotes(endpoint: endpoint, quotes: quotes, timestamp: timestamp))
+                        dispatch(UpdateRates())
+                    })
+                }.map(service.store(cancellable:))
+            }
         }
     }
 
@@ -62,5 +81,17 @@ struct CurrencyActions {
     struct SetLiveQuotes: Action {
         let endpoint: CurrencyService.Endpoint
         let quotes: CurrencyQuotes
+        let timestamp: TimeInterval
+    }
+
+    struct SetAmount: Action {
+        let amount: Float
+    }
+
+    struct SetSelectedCurrency: Action {
+        let currency: CurrencyIdentifier
+    }
+
+    struct UpdateRates: Action {
     }
 }

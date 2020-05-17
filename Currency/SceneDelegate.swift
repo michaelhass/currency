@@ -35,8 +35,8 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             .liveQuotes: "usd_quotes"
         ]
         let testData = TestData(currencyService: currencyData)
-        shared = .testing(baseURL: baseURL, testData: testData)
-
+        //shared = .testing(baseURL: baseURL, testData: testData)
+        shared = .default(baseURL: baseURL, apiKey: apiKey)
         #else
         shared = .default(baseURL: baseURL, apiKey: apiKey)
         #endif

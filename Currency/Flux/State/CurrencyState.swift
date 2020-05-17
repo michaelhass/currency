@@ -9,12 +9,13 @@
 import Foundation
 
 struct CurrencyState: Equatable {
-
     var requestState: RequestState = .idle
     var currencyQuotes: CurrencyQuotes?
+    var quotesTimestamp: TimeInterval?
     var currencies: [CurrencyIdentifier] = []
     var selectedCurrency: CurrencyIdentifier?
     var amount: Float?
+    var result: [ExchangeResult] = []
 }
 
 extension CurrencyState {

@@ -12,7 +12,7 @@ import SwiftUI
 
 protocol InputFormObserver {
     func editingStarted()
-    func editingEnded()
+    func editingEnded(text: String)
     func editingCanceled()
     func textChanged(text: String)
 }
@@ -24,7 +24,7 @@ struct InputForm: View {
     // MARK: Bindings
     @State private var enteredText: String = ""
     @State private var showCancel: Bool = false
-    @State private var selectedCurrency = 0
+    @State private var isEditing: Bool = false
 
     // MARK: Properties
 
@@ -56,9 +56,10 @@ struct InputForm: View {
                     self.observer.editingStarted()
                 }
                 self.showCancel = editing
+                self.isEditing = editing
 
             }, onCommit: {
-                self.observer.editingEnded()
+                self.observer.editingEnded(text: self.enteredText)
             })
                 .keyboardType(.decimalPad)
                 .foregroundColor(.primary)
@@ -67,15 +68,14 @@ struct InputForm: View {
                 self.enteredText = ""
             }, label: {
                 Image(systemName: "xmark.circle.fill")
-            }).opacity(self.enteredText.isEmpty ? 0 : 1)
+            }).opacity(self.enteredText.isEmpty || !isEditing ? 0 : 1)
 
             if showCancel {
                 Button("Cancel") {
-                    UIApplication.shared.dismissKeyboard()
                     self.enteredText = ""
                     self.showCancel = false
                     self.observer.editingCanceled()
-
+                    UIApplication.shared.dismissKeyboard()
                 }.foregroundColor(Color(.systemBlue))
             }
         }.padding(EdgeInsets(top: 8, leading: 6, bottom: 8, trailing: 6))
@@ -87,6 +87,7 @@ struct InputForm: View {
 
 struct InputForm_Previews: PreviewProvider {
     private struct Observer: InputFormObserver {
+        func editingEnded(text: String) {}
         func editingStarted() {}
         func editingEnded() {}
         func editingCanceled() {}

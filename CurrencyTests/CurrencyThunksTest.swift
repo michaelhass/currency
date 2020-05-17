@@ -17,8 +17,8 @@ class CurrencyThunksTest: XCTestCase {
 
     private static func createStore() -> Store<AppState> {
         .init(initialState: .initial,
-        reducer: appReducer(state:action:),
-        middleware: [Store<AppState>.createThunkMiddleware()])
+              reducer: appReducer(state:action:),
+              middleware: [Store<AppState>.createThunkMiddleware()])
     }
 
     override func tearDownWithError() throws {
@@ -39,7 +39,7 @@ class CurrencyThunksTest: XCTestCase {
 
     func testRequestCurrenciesSuccess() throws {
         let testData: [CurrencyService.Endpoint: String] = [
-               .currencyList: "currencies"
+            .currencyList: "currencies"
         ]
 
         let service = CurrencyService.testing(baseURL: baseURL, testData: testData)
@@ -54,7 +54,9 @@ class CurrencyThunksTest: XCTestCase {
         ]
 
         let service = CurrencyService.testing(baseURL: baseURL, testData: testData)
-        let thunk: Thunk<AppState> = CurrencyActions.requestQuotes(service: service)
+        let thunk: Thunk<AppState> = CurrencyActions.requestRates(amount: 0,
+                                                                  currency: .init(abbr: "", name: ""),
+                                                                  service: service)
 
         testError(thunk: thunk, endpoint: .liveQuotes, testData: testData)
     }
@@ -65,7 +67,9 @@ class CurrencyThunksTest: XCTestCase {
         ]
 
         let service = CurrencyService.testing(baseURL: baseURL, testData: testData)
-        let thunk: Thunk<AppState> = CurrencyActions.requestQuotes(service: service)
+        let thunk: Thunk<AppState> = CurrencyActions.requestRates(amount: 0,
+                                                                  currency: .init(abbr: "", name: ""),
+                                                                  service: service)
 
         testSuccess(thunk: thunk, endpoint: .liveQuotes, testData: testData)
     }
@@ -76,24 +80,24 @@ class CurrencyThunksTest: XCTestCase {
                    endpoint: CurrencyService.Endpoint,
                    testData: [CurrencyService.Endpoint: String]) {
 
-          let expectFetching = XCTestExpectation(description: "Expect to be fetching: \(endpoint)")
-          let expectError = XCTestExpectation(description: "Expect to have an error for request: \(endpoint)")
+        let expectFetching = XCTestExpectation(description: "Expect to be fetching: \(endpoint)")
+        let expectError = XCTestExpectation(description: "Expect to have an error for request: \(endpoint)")
 
-          _ = store.$state
-              .subscribe(on: DispatchQueue.main)
-              .sink(receiveValue: { updatedState in
-                  switch updatedState.currencyState.requestState {
-                  case .fetching(let value) where value == endpoint:
-                      expectFetching.fulfill()
-                  case .error:
-                      expectError.fulfill()
-                  default: break
-              }
-          })
+        _ = store.$state
+            .subscribe(on: DispatchQueue.main)
+            .sink(receiveValue: { updatedState in
+                switch updatedState.currencyState.requestState {
+                case .fetching(let value) where value == endpoint:
+                    expectFetching.fulfill()
+                case .error:
+                    expectError.fulfill()
+                default: break
+                }
+            })
 
-          store.dispatch(action: thunk)
-          wait(for: [expectFetching, expectError], timeout: 5)
-      }
+        store.dispatch(action: thunk)
+        wait(for: [expectFetching, expectError], timeout: 5)
+    }
 
     func testSuccess(thunk: Thunk<AppState>,
                      endpoint: CurrencyService.Endpoint,
@@ -112,7 +116,7 @@ class CurrencyThunksTest: XCTestCase {
                     expectSuccess.fulfill()
                 default: break
                 }
-        })
+            })
 
         store.dispatch(action: thunk)
         wait(for: [expectFetching, expectSuccess], timeout: 5)
