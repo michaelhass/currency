@@ -15,7 +15,11 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
     private typealias StoreType = Store<AppState>
-    private var store: StoreType?
+    private let store: StoreType = {
+        .init(initialState: .initial,
+              reducer: appReducer(state:action:),
+              middleware: [StoreType.createThunkMiddleware(), StoreType.createLoggerMiddleware()])
+    }()
 
     override init() {
         super.init()
@@ -43,12 +47,8 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                willConnectTo session: UISceneSession,
                options connectionOptions: UIScene.ConnectionOptions) {
 
-        store = .init(initialState: .initial,
-                      reducer: appReducer(state:action:),
-                      middleware: [StoreType.createThunkMiddleware(), StoreType.createLoggerMiddleware()])
-
         // Create the SwiftUI view that provides the window contents.
-        let contentView = ContentView()
+        let contentView = ExchangeRateView().environmentObject(store)
 
         // Use a UIHostingController as window root view controller.
         if let windowScene = scene as? UIWindowScene {
