@@ -12,7 +12,6 @@ import XCTest
 class CurrencyReducerTest: XCTestCase {
 
     func testFetchAction() throws {
-
         let initialState = CurrencyState()
         let fetchAction = CurrencyActions.SetFetching(endoint: .currencyList)
         let updatedState = currencyReducer(state: initialState, action: fetchAction)
@@ -22,7 +21,6 @@ class CurrencyReducerTest: XCTestCase {
         // Everything else should equal initial state
         XCTAssertTrue(updatedState.currencyList == initialState.currencyList)
         XCTAssertTrue(updatedState.currencyQuotes == initialState.currencyQuotes)
-
     }
 
     func testErrorAction() throws {

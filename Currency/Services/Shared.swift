@@ -16,19 +16,15 @@ struct TestData {
     let currencyService: [CurrencyService.Endpoint: String]
 }
 
+// MARK: - Helper
+
 extension Shared {
 
     static func `default`(baseURL: URL, apiKey: String) -> Shared {
-        let currencyService = CurrencyService(baseURL: baseURL, apiKey: apiKey, session: .shared)
-        return .init(currencyService: currencyService)
+        return .init(currencyService: .init(baseURL: baseURL, apiKey: apiKey, session: .shared))
     }
 
     static func testing(baseURL: URL, testData: TestData) -> Shared {
-        CurrencyServiceMocking.setTestData(testData: testData.currencyService, baseURL: baseURL)
-        let config = URLSessionConfiguration.ephemeral
-        config.protocolClasses = [CurrencyServiceMocking.self]
-        let session = URLSession(configuration: config)
-        let currencyService = CurrencyService(baseURL: baseURL, apiKey: "TEST_KEY", session: session)
-        return .init(currencyService: currencyService)
+        return .init(currencyService: .testing(baseURL: baseURL, testData: testData.currencyService))
     }
 }

@@ -29,6 +29,7 @@
 		7EFD79DB2471426500670AF2 /* Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EFD79DA2471426500670AF2 /* Shared.swift */; };
 		7EFD79DD247150FC00670AF2 /* error_response.json in Resources */ = {isa = PBXBuildFile; fileRef = 7EFD79DC247150FC00670AF2 /* error_response.json */; };
 		7EFD79DF24715E6F00670AF2 /* CurrencyReducerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EFD79DE24715E6F00670AF2 /* CurrencyReducerTest.swift */; };
+		7EFD79E12471657F00670AF2 /* CurrencyThunksTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EFD79E02471657F00670AF2 /* CurrencyThunksTest.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -68,6 +69,7 @@
 		7EFD79DA2471426500670AF2 /* Shared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared.swift; sourceTree = "<group>"; };
 		7EFD79DC247150FC00670AF2 /* error_response.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = error_response.json; sourceTree = "<group>"; };
 		7EFD79DE24715E6F00670AF2 /* CurrencyReducerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyReducerTest.swift; sourceTree = "<group>"; };
+		7EFD79E02471657F00670AF2 /* CurrencyThunksTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyThunksTest.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -136,6 +138,7 @@
 				7E4F676024700A8B00FD2F94 /* CurrencyTests.swift */,
 				7E4F676224700A8B00FD2F94 /* Info.plist */,
 				7EFD79DE24715E6F00670AF2 /* CurrencyReducerTest.swift */,
+				7EFD79E02471657F00670AF2 /* CurrencyThunksTest.swift */,
 			);
 			path = CurrencyTests;
 			sourceTree = "<group>";
@@ -365,6 +368,7 @@
 			files = (
 				7E4F676124700A8B00FD2F94 /* CurrencyTests.swift in Sources */,
 				7EFD79DF24715E6F00670AF2 /* CurrencyReducerTest.swift in Sources */,
+				7EFD79E12471657F00670AF2 /* CurrencyThunksTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

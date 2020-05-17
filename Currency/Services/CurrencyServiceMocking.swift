@@ -17,7 +17,9 @@ final class CurrencyServiceMocking: URLProtocol {
             guard let key = element.key.relativePath.map(baseURL.appendingPathComponent(_:)) else {
                 return
             }
-            guard let url = Bundle.main.url(forResource: element.value, withExtension: ".json") else {
+
+            guard let url = Bundle(for: CurrencyServiceMocking.self)
+                .url(forResource: element.value, withExtension: ".json") else {
                 return
             }
             result[key] = try? Data(contentsOf: url)
