@@ -17,6 +17,7 @@ struct Thunk<State>: Action {
     let body: (_ dispatch: @escaping DispatchFunction, _ state: @escaping () -> State) -> Void
 }
 
+/// A handler for executing side effects when dispatching actions.
 typealias Middleware<State> = (_ dispatch: @escaping DispatchFunction, _ state: @escaping () -> State)
     -> DispatchFunction
 
@@ -89,7 +90,6 @@ extension Store {
     }
 
     static func createThunkMiddleWare<T>() -> Middleware<T> {
-
         return { dispatch, state in
             return { action in
                 if let thunk = action as? Thunk<T> {

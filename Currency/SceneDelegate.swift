@@ -9,18 +9,19 @@
 import UIKit
 import SwiftUI
 
-struct AppState {
-
-}
-
 final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
-    private var store: Store<AppState>?
+    private typealias StoreType = Store<AppState>
+    private var store: StoreType?
 
     func scene(_ scene: UIScene,
                willConnectTo session: UISceneSession,
                options connectionOptions: UIScene.ConnectionOptions) {
+
+        store = .init(initialState: .initial,
+                      reducer: appReducer(state:action:),
+                      middleware: [StoreType.createThunkMiddleWare(), StoreType.createLoggerMiddleware()])
 
         // Create the SwiftUI view that provides the window contents.
         let contentView = ContentView()
