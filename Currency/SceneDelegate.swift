@@ -20,7 +20,8 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     override init() {
         super.init()
 
-        let baseURL = URL(string: "https://api.currencylayer.com/")!
+        // NOTE: Free subscription plan does not support HTTPS
+        let baseURL = URL(string: "http://api.currencylayer.com/")!
         // Place your api key here
         let apiKey = "fc4930a1480d39ef7b55f679e98a1afa"
 
@@ -45,14 +46,6 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         store = .init(initialState: .initial,
                       reducer: appReducer(state:action:),
                       middleware: [StoreType.createThunkMiddleware(), StoreType.createLoggerMiddleware()])
-
-        _ = shared.map(\.currencyService)
-            .map(CurrencyActions.requestCurrencies(service:))
-            .map(store!.dispatch(action:))
-
-        _ = shared.map(\.currencyService)
-            .map(CurrencyActions.requestQuotes(service:))
-            .map(store!.dispatch(action:))
 
         // Create the SwiftUI view that provides the window contents.
         let contentView = ContentView()
