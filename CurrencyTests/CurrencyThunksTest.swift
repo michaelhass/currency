@@ -54,9 +54,7 @@ class CurrencyThunksTest: XCTestCase {
         ]
 
         let service = CurrencyService.testing(baseURL: baseURL, testData: testData)
-        let thunk: Thunk<AppState> = CurrencyActions.requestRates(amount: 0,
-                                                                  currency: .init(abbr: "", name: ""),
-                                                                  service: service)
+        let thunk: Thunk<AppState> = CurrencyActions.requestRates(service: service)
 
         testError(thunk: thunk, endpoint: .liveQuotes, testData: testData)
     }
@@ -67,9 +65,7 @@ class CurrencyThunksTest: XCTestCase {
         ]
 
         let service = CurrencyService.testing(baseURL: baseURL, testData: testData)
-        let thunk: Thunk<AppState> = CurrencyActions.requestRates(amount: 0,
-                                                                  currency: .init(abbr: "", name: ""),
-                                                                  service: service)
+        let thunk: Thunk<AppState> = CurrencyActions.requestRates(service: service)
 
         testSuccess(thunk: thunk, endpoint: .liveQuotes, testData: testData)
     }
