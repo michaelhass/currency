@@ -14,7 +14,7 @@ final class CurrencyService {
 
     // MARK: Nested types
 
-    enum Endpoint {
+    enum Endpoint: CaseIterable {
         case liveRates
         case currencyList
 
@@ -38,7 +38,7 @@ final class CurrencyService {
 
     // MARK: Init
 
-    init(baseURL: URL, apiKey: String, session: URLSession = .shared) {
+    init(baseURL: URL, apiKey: String, session: URLSession) {
         self.baseURL = baseURL
         self.apiKey = apiKey
         self.session = session

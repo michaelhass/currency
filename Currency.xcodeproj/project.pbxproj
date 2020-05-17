@@ -22,6 +22,9 @@
 		7EFD79CB2471108500670AF2 /* CurrencyList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EFD79CA2471108500670AF2 /* CurrencyList.swift */; };
 		7EFD79CD2471109F00670AF2 /* CurrencyRates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EFD79CC2471109F00670AF2 /* CurrencyRates.swift */; };
 		7EFD79D0247111C800670AF2 /* AppReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EFD79CF247111C800670AF2 /* AppReducer.swift */; };
+		7EFD79D424712A1100670AF2 /* currencies.json in Resources */ = {isa = PBXBuildFile; fileRef = 7EFD79D224712A1100670AF2 /* currencies.json */; };
+		7EFD79D524712A1100670AF2 /* usd_rates.json in Resources */ = {isa = PBXBuildFile; fileRef = 7EFD79D324712A1100670AF2 /* usd_rates.json */; };
+		7EFD79D724712A4E00670AF2 /* CurrencyServiceMocking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EFD79D624712A4E00670AF2 /* CurrencyServiceMocking.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,6 +57,9 @@
 		7EFD79CA2471108500670AF2 /* CurrencyList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyList.swift; sourceTree = "<group>"; };
 		7EFD79CC2471109F00670AF2 /* CurrencyRates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyRates.swift; sourceTree = "<group>"; };
 		7EFD79CF247111C800670AF2 /* AppReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppReducer.swift; sourceTree = "<group>"; };
+		7EFD79D224712A1100670AF2 /* currencies.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = currencies.json; sourceTree = "<group>"; };
+		7EFD79D324712A1100670AF2 /* usd_rates.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = usd_rates.json; sourceTree = "<group>"; };
+		7EFD79D624712A4E00670AF2 /* CurrencyServiceMocking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyServiceMocking.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -128,6 +134,7 @@
 		7E4F676B24700BCA00FD2F94 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				7EFD79D1247126DC00670AF2 /* Mocking */,
 				7E4F674F24700A8B00FD2F94 /* Assets.xcassets */,
 				7E4F675724700A8B00FD2F94 /* Info.plist */,
 			);
@@ -149,6 +156,7 @@
 			isa = PBXGroup;
 			children = (
 				7EFD79BF24703EF400670AF2 /* CurrencyService.swift */,
+				7EFD79D624712A4E00670AF2 /* CurrencyServiceMocking.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -185,6 +193,15 @@
 				7EFD79CF247111C800670AF2 /* AppReducer.swift */,
 			);
 			path = Reducer;
+			sourceTree = "<group>";
+		};
+		7EFD79D1247126DC00670AF2 /* Mocking */ = {
+			isa = PBXGroup;
+			children = (
+				7EFD79D224712A1100670AF2 /* currencies.json */,
+				7EFD79D324712A1100670AF2 /* usd_rates.json */,
+			);
+			path = Mocking;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -271,6 +288,8 @@
 			files = (
 				7E4F675624700A8B00FD2F94 /* LaunchScreen.storyboard in Resources */,
 				7E4F675324700A8B00FD2F94 /* Preview Assets.xcassets in Resources */,
+				7EFD79D524712A1100670AF2 /* usd_rates.json in Resources */,
+				7EFD79D424712A1100670AF2 /* currencies.json in Resources */,
 				7E4F675024700A8B00FD2F94 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -321,6 +340,7 @@
 				7E4F674C24700A8A00FD2F94 /* SceneDelegate.swift in Sources */,
 				7EFD79CD2471109F00670AF2 /* CurrencyRates.swift in Sources */,
 				7E4F674E24700A8A00FD2F94 /* ContentView.swift in Sources */,
+				7EFD79D724712A4E00670AF2 /* CurrencyServiceMocking.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
