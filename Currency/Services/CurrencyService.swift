@@ -138,7 +138,7 @@ extension CurrencyService {
 }
 
 extension CurrencyService {
-    static func testing(baseURL: URL, testData: [Endpoint: String]) ->  CurrencyService {
+    static func testing(baseURL: URL, testData: [Endpoint: String]) -> CurrencyService {
         CurrencyServiceMocking.setTestData(testData: testData, baseURL: baseURL)
         let config = URLSessionConfiguration.ephemeral
         config.protocolClasses = [CurrencyServiceMocking.self]

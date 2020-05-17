@@ -9,6 +9,8 @@
 import SwiftUI
 
 struct ExchangeRateView: View {
+    @EnvironmentObject var store: Store<AppState>
+
     var body: some View {
         Text("Hello, World!")
     }

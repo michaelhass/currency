@@ -109,12 +109,12 @@
 		7E4F674824700A8A00FD2F94 /* Currency */ = {
 			isa = PBXGroup;
 			children = (
+				7EFD79E2247174B000670AF2 /* Views */,
 				7EFD79C92471107900670AF2 /* Models */,
 				7EFD79BE24703EE100670AF2 /* Services */,
 				7EFD79BB2470124100670AF2 /* Flux */,
 				7E4F674924700A8A00FD2F94 /* AppDelegate.swift */,
 				7E4F674B24700A8A00FD2F94 /* SceneDelegate.swift */,
-				7E4F674D24700A8A00FD2F94 /* ExchangeRateView.swift */,
 				7E4F675424700A8B00FD2F94 /* LaunchScreen.storyboard */,
 				7E4F676B24700BCA00FD2F94 /* Resources */,
 				7E4F675124700A8B00FD2F94 /* Preview Content */,
@@ -214,6 +214,14 @@
 				7EFD79DC247150FC00670AF2 /* error_response.json */,
 			);
 			path = Mocking;
+			sourceTree = "<group>";
+		};
+		7EFD79E2247174B000670AF2 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				7E4F674D24700A8A00FD2F94 /* ExchangeRateView.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
