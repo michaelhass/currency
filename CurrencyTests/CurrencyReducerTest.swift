@@ -24,7 +24,6 @@ class CurrencyReducerTest: XCTestCase {
     }
 
     func testErrorAction() throws {
-
         let initialState = CurrencyState()
         let errorAction = CurrencyActions.ShowError(error: Error())
         let updatedState = currencyReducer(state: initialState, action: errorAction)
@@ -38,7 +37,6 @@ class CurrencyReducerTest: XCTestCase {
     }
 
     func testSetCurrenciesAction() throws {
-
         let initialState = CurrencyState()
         let currencies: [String: String] = ["JPY": "Japanese Yen"]
         let currencyList: CurrencyList = .init(currencies: currencies)
@@ -52,7 +50,6 @@ class CurrencyReducerTest: XCTestCase {
     }
 
     func testSetLiveQuotesAction() throws {
-
         let initialState = CurrencyState()
         let source = "USD"
         let quotes: [String: Float] = ["USDJPY": 1000]
