@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct CurrencyQuotes: Codable {
+struct CurrencyQuotes: Codable, Equatable {
     let source: String
     let timestamp: TimeInterval
     let quotes: [String: Float]

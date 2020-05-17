@@ -12,11 +12,32 @@ struct CurrencyState {
     var currencyList: CurrencyList?
     var requestState: RequestState = .idle
     var currencyQuotes: CurrencyQuotes?
+}
 
-    enum RequestState {
+extension CurrencyState {
+
+    enum RequestState: Equatable {
+
         case idle
         case fetching(CurrencyService.Endpoint)
         case error(Swift.Error)
         case success(CurrencyService.Endpoint)
+
+        static func == (lhs: RequestState, rhs: RequestState) -> Bool {
+            switch (lhs, rhs) {
+            case (.idle, .idle):
+                return true
+            case (.fetching(let lhsEndpoint), .fetching(let rhsEndpoint)):
+                return lhsEndpoint == rhsEndpoint
+            case (.success(let lhsEndpoint), .success(let rhsEndpoint)):
+                return lhsEndpoint == rhsEndpoint
+            case (.error, .error):
+                // Ignore actual error
+                return true
+            default:
+                return false
+            }
+        }
+
     }
 }

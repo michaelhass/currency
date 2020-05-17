@@ -8,6 +8,6 @@
 
 import Foundation
 
-struct CurrencyList: Codable {
+struct CurrencyList: Codable, Equatable {
     let currencies: [String: String]
 }
