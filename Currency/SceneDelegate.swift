@@ -9,18 +9,43 @@
 import UIKit
 import SwiftUI
 
-struct AppState {
-
-}
+private(set) var shared: Shared?
 
 final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
-    private var store: Store<AppState>?
+    private typealias StoreType = Store<AppState>
+    private var store: StoreType?
+
+    override init() {
+        super.init()
+
+        // NOTE: Free subscription plan does not support HTTPS
+        let baseURL = URL(string: "http://api.currencylayer.com/")!
+        // Place your api key here
+        let apiKey = "fc4930a1480d39ef7b55f679e98a1afa"
+
+        #if DEBUG
+        let currencyData: [CurrencyService.Endpoint: String] = [
+            .currencyList: "currencies",
+            .liveQuotes: "usd_quotes"
+        ]
+        let testData = TestData(currencyService: currencyData)
+        shared = .testing(baseURL: baseURL, testData: testData)
+
+        #else
+        shared = .default(baseURL: baseURL, apiKey: apiKey)
+        #endif
+
+    }
 
     func scene(_ scene: UIScene,
                willConnectTo session: UISceneSession,
                options connectionOptions: UIScene.ConnectionOptions) {
+
+        store = .init(initialState: .initial,
+                      reducer: appReducer(state:action:),
+                      middleware: [StoreType.createThunkMiddleware(), StoreType.createLoggerMiddleware()])
 
         // Create the SwiftUI view that provides the window contents.
         let contentView = ContentView()
@@ -32,34 +57,5 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             self.window = window
             window.makeKeyAndVisible()
         }
-    }
-
-    func sceneDidDisconnect(_ scene: UIScene) {
-        // Called as the scene is being released by the system.
-        // This occurs shortly after the scene enters the background, or when its session is discarded.
-        // Release any resources associated with this scene that can be re-created the next time the scene connects.
-        // The scene may re-connect later, as its session was not neccessarily
-        // discarded (see `application:didDiscardSceneSessions` instead).
-    }
-
-    func sceneDidBecomeActive(_ scene: UIScene) {
-        // Called when the scene has moved from an inactive state to an active state.
-        // Use this method to restart any tasks that were paused (or not yet started) when the scene was inactive.
-    }
-
-    func sceneWillResignActive(_ scene: UIScene) {
-        // Called when the scene will move from an active state to an inactive state.
-        // This may occur due to temporary interruptions (ex. an incoming phone call).
-    }
-
-    func sceneWillEnterForeground(_ scene: UIScene) {
-        // Called as the scene transitions from the background to the foreground.
-        // Use this method to undo the changes made on entering the background.
-    }
-
-    func sceneDidEnterBackground(_ scene: UIScene) {
-        // Called as the scene transitions from the foreground to the background.
-        // Use this method to save data, release shared resources, and store enough scene-specific state information
-        // to restore the scene back to its current state.
     }
 }

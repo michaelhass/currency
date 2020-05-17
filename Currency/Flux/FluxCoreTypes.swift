@@ -17,6 +17,7 @@ struct Thunk<State>: Action {
     let body: (_ dispatch: @escaping DispatchFunction, _ state: @escaping () -> State) -> Void
 }
 
+/// A handler for executing side effects when dispatching actions.
 typealias Middleware<State> = (_ dispatch: @escaping DispatchFunction, _ state: @escaping () -> State)
     -> DispatchFunction
 
@@ -26,9 +27,7 @@ typealias Reducer<State> = (_ state: State, _ action: Action) -> State
 /// Function to dispatch actions on
 typealias DispatchFunction = (_ action: Action) -> Void
 
-/// Place where your Application State is stored. Accepts actions and passes them to
-/// the reducers.
-/// NOTE: Middleware is not supported yet.
+/// Place where your Application State is stored. Accepts actions and passes them to the reducers.
 final class Store<State>: ObservableObject {
 
     @Published private(set) var state: State
@@ -58,7 +57,9 @@ final class Store<State>: ObservableObject {
     ///
     /// - Parameter action: Action to perform
     func dispatch(action: Action) {
-        dispatchFunction(action)
+        DispatchQueue.main.async { [weak self] in
+            self?.dispatchFunction(action)
+        }
     }
 
     private lazy var dispatchFunction: DispatchFunction = {
@@ -80,16 +81,18 @@ extension Store {
     static func createLoggerMiddleware<T>() -> Middleware<T> {
         return { dispatch, state in
             return { action in
+                dispatch(action)
+                #if DEBUG
+                print("[LOG] - \(Date())")
                 print("[LOG] - performed action: \(action)")
                 print("[LOG] - current state: \(state())")
                 print()
-                dispatch(action)
+                #endif
             }
         }
     }
 
-    static func createThunkMiddleWare<T>() -> Middleware<T> {
-
+    static func createThunkMiddleware<T>() -> Middleware<T> {
         return { dispatch, state in
             return { action in
                 if let thunk = action as? Thunk<T> {
