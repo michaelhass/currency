@@ -16,7 +16,7 @@ struct CurrencyActions {
         }
     }
 
-    static func requestCurrencyList(service: CurrencyService) -> Thunk<AppState> {
+    static func requestCurrencies(service: CurrencyService) -> Thunk<AppState> {
         .init { (dispatch, state) in
             let endpoint = CurrencyService.Endpoint.currencyList
             dispatch(SetFetching(endoint: endpoint))
@@ -25,7 +25,22 @@ struct CurrencyActions {
                     guard case .failure(let error) = completed else { return }
                     dispatch(ShowError(error: error))
                 }, receiveValue: { list in
-                    dispatch(SetCurrencyList(endpoint: endpoint, list: list))
+                    dispatch(SetCurrencies(endpoint: endpoint, list: list))
+                })
+            }.map(service.store(cancellable:))
+        }
+    }
+
+    static func requestQuotes(service: CurrencyService) -> Thunk<AppState> {
+        .init { (dispatch, state) in
+            let endpoint = CurrencyService.Endpoint.liveQuotes
+            dispatch(SetFetching(endoint: endpoint))
+            service.request(endpoint, decode: self.decoder(for: CurrencyQuotes.self)).map {
+                $0.sink(receiveCompletion: {  completed in
+                    guard case .failure(let error) = completed else { return }
+                    dispatch(ShowError(error: error))
+                }, receiveValue: { quotes in
+                    dispatch(SetLiveQuotes(endpoint: endpoint, quotes: quotes))
                 })
             }.map(service.store(cancellable:))
         }
@@ -39,8 +54,13 @@ struct CurrencyActions {
         let error: Swift.Error
     }
 
-    struct SetCurrencyList: Action {
+    struct SetCurrencies: Action {
         let endpoint: CurrencyService.Endpoint
         let list: CurrencyList
+    }
+
+    struct SetLiveQuotes: Action {
+        let endpoint: CurrencyService.Endpoint
+        let quotes: CurrencyQuotes
     }
 }

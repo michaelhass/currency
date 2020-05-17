@@ -17,12 +17,14 @@ func currencyReducer(state: CurrencyState, action: Action) -> CurrencyState {
         state.requestState = .fetching(fetchAction.endoint)
     case let errorAction as CurrencyActions.ShowError:
         state.requestState = .error(errorAction.error)
-    case let successAction as CurrencyActions.SetCurrencyList:
+    case let successAction as CurrencyActions.SetCurrencies:
         state.requestState = .success(successAction.endpoint)
         state.currencyList = successAction.list
+    case let successAction as CurrencyActions.SetLiveQuotes:
+        state.requestState = .success(successAction.endpoint)
+        state.currencyQuotes = successAction.quotes
     default:
         break
     }
-
     return state
 }

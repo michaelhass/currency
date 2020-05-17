@@ -27,9 +27,7 @@ typealias Reducer<State> = (_ state: State, _ action: Action) -> State
 /// Function to dispatch actions on
 typealias DispatchFunction = (_ action: Action) -> Void
 
-/// Place where your Application State is stored. Accepts actions and passes them to
-/// the reducers.
-/// NOTE: Middleware is not supported yet.
+/// Place where your Application State is stored. Accepts actions and passes them to the reducers.
 final class Store<State>: ObservableObject {
 
     @Published private(set) var state: State
@@ -59,7 +57,9 @@ final class Store<State>: ObservableObject {
     ///
     /// - Parameter action: Action to perform
     func dispatch(action: Action) {
-        dispatchFunction(action)
+        DispatchQueue.main.async { [weak self] in
+            self?.dispatchFunction(action)
+        }
     }
 
     private lazy var dispatchFunction: DispatchFunction = {
@@ -92,7 +92,7 @@ extension Store {
         }
     }
 
-    static func createThunkMiddleWare<T>() -> Middleware<T> {
+    static func createThunkMiddleware<T>() -> Middleware<T> {
         return { dispatch, state in
             return { action in
                 if let thunk = action as? Thunk<T> {

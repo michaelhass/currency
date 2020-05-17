@@ -12,43 +12,25 @@ final class CurrencyServiceMocking: URLProtocol {
 
     private static var testData = [URL: Data]()
 
-    static func setTestData(testData: [URL: URL]) {
-        self.testData = testData.reduce(into: [:]) { (result, element) in
-            guard let data = try? Data(contentsOf: element.value) else { return }
-            result[element.key] = data
-        }
-    }
-
     static func setTestData(testData: [CurrencyService.Endpoint: String], baseURL: URL) {
-        setTestData(testData:
-            testData.reduce(into: [URL: URL](), { (result, element) in
-                guard let key = element.key.relativePath.map(baseURL.appendingPathComponent(_:)) else {
-                    return
-                }
-                result[key] = Bundle.main.url(forResource: element.value, withExtension: ".json")
-            })
-        )
-    }
-
-    override class func canInit(with request: URLRequest) -> Bool {
-        return true
-    }
-
-    override class func canInit(with task: URLSessionTask) -> Bool {
-        return true
-    }
-
-    // ignore this method; just send back what we were given
-    override class func canonicalRequest(for request: URLRequest) -> URLRequest {
-        return request
+        self.testData = testData.reduce(into: [URL: Data]()) { (result, element) in
+            guard let key = element.key.relativePath.map(baseURL.appendingPathComponent(_:)) else {
+                return
+            }
+            guard let url = Bundle.main.url(forResource: element.value, withExtension: ".json") else {
+                return
+            }
+            result[key] = try? Data(contentsOf: url)
+        }
     }
 
     override func startLoading() {
         defer {
+            // Always notify the client that the request is completed
             client?.urlProtocolDidFinishLoading(self)
         }
 
-        _ = request.url.flatMap { url -> URL? in
+        request.url.flatMap { url -> URL? in
             // Remove query items
             var components = URLComponents(url: url, resolvingAgainstBaseURL: false)
             components?.queryItems = nil
@@ -56,12 +38,34 @@ final class CurrencyServiceMocking: URLProtocol {
         }.flatMap { url -> Data? in
             CurrencyServiceMocking.testData[url]
         }.map { data -> Void in
+            // TestData successfullly retrieved.
+            // Notify the client with the retrieved data and and empty URLResponse.
             client?.urlProtocol(self, didLoad: data)
             client?.urlProtocol(self, didReceive: HTTPURLResponse(), cacheStoragePolicy: .allowedInMemoryOnly)
-            return Void()
         }
     }
 
+    // MARK: Required
+    // NOTE: We have to override the following few functions, even though the implementation doesn't do much.
+    // Otherwise the mocking process might not work properly.
+
     override func stopLoading() {
+        // Do nothing
     }
+
+    override class func canInit(with request: URLRequest) -> Bool {
+        // Handle every request
+        return true
+    }
+
+    override class func canInit(with task: URLSessionTask) -> Bool {
+        // Handle every task
+        return true
+    }
+
+    override class func canonicalRequest(for request: URLRequest) -> URLRequest {
+        // Ignore
+        return request
+    }
+
 }

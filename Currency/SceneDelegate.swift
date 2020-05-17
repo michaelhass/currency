@@ -27,7 +27,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         #if DEBUG
         let currencyData: [CurrencyService.Endpoint: String] = [
             .currencyList: "currencies",
-            .liveRates: "usd_rates"
+            .liveQuotes: "usd_quotes"
         ]
         let testData = TestData(currencyService: currencyData)
         shared = .testing(baseURL: baseURL, testData: testData)
@@ -44,11 +44,16 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         store = .init(initialState: .initial,
                       reducer: appReducer(state:action:),
-                      middleware: [StoreType.createThunkMiddleWare(), StoreType.createLoggerMiddleware()])
+                      middleware: [StoreType.createThunkMiddleware(), StoreType.createLoggerMiddleware()])
 
         _ = shared.map(\.currencyService)
-            .map(CurrencyActions.requestCurrencyList(service:))
+            .map(CurrencyActions.requestCurrencies(service:))
             .map(store!.dispatch(action:))
+
+        _ = shared.map(\.currencyService)
+            .map(CurrencyActions.requestQuotes(service:))
+            .map(store!.dispatch(action:))
+
         // Create the SwiftUI view that provides the window contents.
         let contentView = ContentView()
 

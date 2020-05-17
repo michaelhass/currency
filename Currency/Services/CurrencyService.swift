@@ -15,12 +15,12 @@ final class CurrencyService {
     // MARK: Nested types
 
     enum Endpoint: CaseIterable {
-        case liveRates
+        case liveQuotes
         case currencyList
 
         var relativePath: String? {
             switch self {
-            case .liveRates:
+            case .liveQuotes:
                 return "live"
             case .currencyList:
                 return "list"
