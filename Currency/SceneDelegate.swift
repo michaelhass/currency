@@ -20,23 +20,35 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     override init() {
         super.init()
 
+        // Use either the standard shared object that communicates
+        // Remotely with every registered service.
+
+        let apiKey = "YOUR_KEY"
+        shared = defaultShared(withKey: apiKey)
+
+        // OR
+
+        // Use the testing evironment.
+        // Responses are in the directory 'Mocking'
+
+        // shared = testShared()
+    }
+
+    private func testShared() -> Shared {
+        let baseURL = URL(string: "https://duckduckgo.com/")!
+
+        let currencyData: [CurrencyService.Endpoint: String] = [
+                .currencyList: "currencies",
+                .liveQuotes: "usd_quotes"
+            ]
+        let testData = TestData(currencyService: currencyData)
+        return .testing(baseURL: baseURL, testData: testData)
+    }
+
+    private func defaultShared(withKey key: String) -> Shared {
         // NOTE: Free subscription plan does not support HTTPS
         let baseURL = URL(string: "http://api.currencylayer.com/")!
-        // Place your api key here
-        let apiKey = "fc4930a1480d39ef7b55f679e98a1afa"
-
-        #if DEBUG
-        let currencyData: [CurrencyService.Endpoint: String] = [
-            .currencyList: "currencies",
-            .liveQuotes: "usd_quotes"
-        ]
-        let testData = TestData(currencyService: currencyData)
-        shared = .testing(baseURL: baseURL, testData: testData)
-
-        #else
-        shared = .default(baseURL: baseURL, apiKey: apiKey)
-        #endif
-
+        return .default(baseURL: baseURL, apiKey: key)
     }
 
     func scene(_ scene: UIScene,

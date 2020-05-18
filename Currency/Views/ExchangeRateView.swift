@@ -37,12 +37,16 @@ struct ExchangeRateView: View {
                 header().padding()
                 content()
             }.navigationBarTitle("Exchange rates", displayMode: .large)
+
         }.onAppear {
-            // Load currencies
+            // Refresh currencies after 60 minutes.
+            let isExpired = self.store.state.currencyState.quotesTimestamp?.isOlderThan(minutes: 60) ?? false
+            guard self.currencies.isEmpty || isExpired else { return }
             shared
                 .map(\.currencyService)
                 .map(CurrencyActions.requestCurrencies(service:))
                 .map(self.store.dispatch(action:))
+
         }.onReceive(store.$state) { state in
             self.currencies = state.currencyState.currencies
             self.results = state.currencyState.result
@@ -148,7 +152,10 @@ extension ExchangeRateView {
             switch currencyState?.requestState {
             case .fetching?:
                 return "Updating data"
-            case .error:
+            case .error(let error):
+                if case .errorResponse(let response)? = error as? CurrencyService.Error {
+                    return response.info
+                }
                 return "Oh no, an error occured."
             default:
                 return ""
