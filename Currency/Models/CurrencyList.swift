@@ -8,8 +8,12 @@
 
 import Foundation
 
-struct CurrencyList: Codable, Equatable {
+struct CurrencyList: Codable, Equatable, CustomStringConvertible {
     let currencies: [String: String]
+
+    var description: String {
+        return "currencies: \(currencies.shortDescriptor(maxElements: 3))"
+    }
 }
 
 struct CurrencyIdentifier: Codable, Equatable, Identifiable {

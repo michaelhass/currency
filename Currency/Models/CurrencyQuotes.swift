@@ -8,10 +8,14 @@
 
 import Foundation
 
-struct CurrencyQuotes: Codable, Equatable {
+struct CurrencyQuotes: Codable, Equatable, CustomStringConvertible {
     let source: String
     // Age of the currency quotes.
     // NOTE: Does not necessary equal requested time
     let timestamp: TimeInterval
     let quotes: [String: Float]
+
+    var description: String {
+        return "soure: \(source), timestamp: \(timestamp), quotes: [\(quotes.shortDescriptor(maxElements: 3))]"
+    }
 }

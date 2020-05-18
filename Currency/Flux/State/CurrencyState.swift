@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct CurrencyState: Equatable, Codable {
+struct CurrencyState: Equatable, Codable, CustomStringConvertible {
     var requestState: RequestState = .idle
     var currencyQuotes: CurrencyQuotes?
     var quotesTimestamp: TimeInterval?
@@ -24,6 +24,17 @@ struct CurrencyState: Equatable, Codable {
         case selectedCurrency
         case amount
         case result
+    }
+
+    var description: String {
+
+        return "requestState: \(requestState), "
+            + "currencyQuotes: \(String(describing: currencyQuotes)), "
+            + "quotesTimestamp: \(String(describing: quotesTimestamp)), "
+            + "currencies: \(currencies.shortDescriptor(maxElements: 3)), "
+            + "selectedCurrency: \(String(describing: selectedCurrency)), "
+            + "amount: \(String(describing: amount)), "
+            + "result: \(result.shortDescriptor(maxElements: 3))"
     }
 }
 

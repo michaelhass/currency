@@ -8,20 +8,33 @@
 
 import Foundation
 
+/// Creates a middleware that logs the current state
+/// after exectuting the dispatch function.
+/// NOTE: Logs only in debug mode.
 func createLoggerMiddleware() -> Middleware<AppState> {
     return { dispatch, state in
         return { action in
             dispatch(action)
             #if DEBUG
             print("[LOG] - \(Date())")
-            print("[LOG] - performed action: \(action)")
-            print("[LOG] - current state: \(state())")
+            print("[LOG] - performed action:")
+            print("[LOG] - \(action)")
+            print("[LOG]")
+            print("[LOG] - current state:")
+            print("[LOG] - \(state())")
+            print("[LOG]")
+            print("[LOG] -------")
             print()
             #endif
         }
     }
 }
 
+/// Creates a middleware for handling ThunkActions.
+/// NOTE: A Thunk may alter the dispatched action,
+/// thus it should be the first middleware to perform any actions.
+///
+/// - Returns: a Middleware<AppState>
 func createThunkMiddleware() -> Middleware<AppState> {
     return { dispatch, state in
         return { action in
@@ -34,6 +47,11 @@ func createThunkMiddleware() -> Middleware<AppState> {
     }
 }
 
+/// Creates a middleware that stores the current appstate
+/// NOTE: Should be the last middleware to perform any actions
+///
+/// - Parameter cache: Cache to store data in
+/// - Returns: a Middleware<AppState>
 func createCacheMiddleware(cache: AppStateCache) -> Middleware<AppState> {
     return { dispatch, state in
         return { action in
