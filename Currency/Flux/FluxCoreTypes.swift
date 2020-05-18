@@ -52,9 +52,6 @@ final class Store<State>: ObservableObject {
     /// Code will be executed on main thread because state updates directly
     /// trigger view updates -> @published.
     ///
-    /// NOTE: in case of an AsyncAction, the execute(dispatch:) function will be called after
-    /// the passed action was handled by the reducer.
-    ///
     /// - Parameter action: Action to perform
     func dispatch(action: Action) {
         DispatchQueue.main.async { [weak self] in

@@ -39,3 +39,4 @@ Get an API Key from [currencylayer.com](https://currencylayer.com) and paste it 
 - Swift 5.2
 - Requires iOS 13.4
 - Available for iPhone & iPad
+- swiftlint version 0.39.2
