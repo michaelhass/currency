@@ -35,7 +35,7 @@ Get an API Key from [currencylayer.com](https://currencylayer.com) and paste it 
 - Logger middleware
   
 ## Info
-- Created with XCode 11.4.1 
+- Created with Xcode 11.4.1 
 - Swift 5.2
 - Requires iOS 13.4
 - Available for iPhone & iPad
