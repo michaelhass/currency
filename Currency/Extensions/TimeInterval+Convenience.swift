@@ -17,6 +17,6 @@ extension TimeInterval {
     func isOlderThan(minutes: Int) -> Bool {
         let diff = Date().timeIntervalSince1970 - self
         let compareTo: TimeInterval = TimeInterval(minutes) * 60
-        return diff >= compareTo
+        return diff > compareTo
     }
 }

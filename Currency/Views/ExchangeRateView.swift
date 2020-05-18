@@ -10,6 +10,7 @@ import SwiftUI
 
 struct ExchangeRateView: View {
 
+    // MARK: Bindings
     @EnvironmentObject var store: Store<AppState>
 
     @State private var showPicker: Bool = false
@@ -20,6 +21,13 @@ struct ExchangeRateView: View {
     @State private var results: [ExchangeResult] = []
 
     // MARK: View properties
+
+    private static let numberFormatter: NumberFormatter = {
+         let numberFormatter = NumberFormatter()
+        numberFormatter.minimumFractionDigits = 2
+        numberFormatter.maximumFractionDigits = 2
+        return numberFormatter
+    }()
 
     private let cornerRadius: CGFloat = 6
 
@@ -38,6 +46,7 @@ struct ExchangeRateView: View {
         }.onReceive(store.$state) { state in
             self.currencies = state.currencyState.currencies
             self.results = state.currencyState.result
+            self.selectedCurrency = state.currencyState.selectedCurrency
             self.attributes = Attributes(currencyState: state.currencyState)
         }
     }
@@ -45,9 +54,8 @@ struct ExchangeRateView: View {
     func content() -> some View {
         ZStack {
             List {
-                ForEach(self.results, id: \.id) { (result: ExchangeResult) in
-                    Text("\(result.currency.abbr):  \(result.exchangeAmount)")
-                }
+                ForEach(self.results, id: \.id, content: resultView(for:))
+
             }.listStyle(PlainListStyle()).gesture(DragGesture().onChanged({ _  in
                 UIApplication.shared.dismissKeyboard()
             }))
@@ -55,6 +63,17 @@ struct ExchangeRateView: View {
             message(text: attributes.message)
                 .opacity(attributes.message.isEmpty ? 0 : 1)
         }
+    }
+
+    func resultView(for result: ExchangeResult) -> some View {
+        let exchangeAmount = ExchangeRateView.numberFormatter.string(from: NSNumber(value: result.exchangeAmount)) ?? ""
+        return VStack(alignment: .leading, spacing: 4) {
+            Text("\(result.currency.abbr) \(exchangeAmount)")
+                .lineLimit(1)
+            Text("\(result.currency.name)")
+                .font(.caption)
+                .lineLimit(1)
+            }
     }
 
     func header() -> some View {
