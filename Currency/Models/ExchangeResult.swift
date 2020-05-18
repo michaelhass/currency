@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct ExchangeResult: Equatable, Identifiable {
+struct ExchangeResult: Equatable, Identifiable, Codable {
     var id: String { currency.id }
     let currency: CurrencyIdentifier
     let exchangeAmount: Float

@@ -32,4 +32,5 @@ identifier_name:
     - key
     - hex
     - red
+    - now
 reporter: "xcode" # reporter type (xcode, json, csv, checkstyle, junit, html, emoji)

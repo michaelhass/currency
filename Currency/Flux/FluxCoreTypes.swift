@@ -75,32 +75,3 @@ final class Store<State>: ObservableObject {
         }
     }()
 }
-
-extension Store {
-
-    static func createLoggerMiddleware<T>() -> Middleware<T> {
-        return { dispatch, state in
-            return { action in
-                dispatch(action)
-                #if DEBUG
-                print("[LOG] - \(Date())")
-                print("[LOG] - performed action: \(action)")
-                print("[LOG] - current state: \(state())")
-                print()
-                #endif
-            }
-        }
-    }
-
-    static func createThunkMiddleware<T>() -> Middleware<T> {
-        return { dispatch, state in
-            return { action in
-                if let thunk = action as? Thunk<T> {
-                    thunk.body(dispatch, state)
-                } else {
-                    dispatch(action)
-                }
-            }
-        }
-    }
-}

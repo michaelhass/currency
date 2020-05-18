@@ -10,6 +10,7 @@ import Foundation
 
 struct Shared {
     let currencyService: CurrencyService
+    let appStateCache: AppStateCache?
 }
 
 struct TestData {
@@ -21,10 +22,12 @@ struct TestData {
 extension Shared {
 
     static func `default`(baseURL: URL, apiKey: String) -> Shared {
-        return .init(currencyService: .init(baseURL: baseURL, apiKey: apiKey, session: .shared))
+        return .init(currencyService: .init(baseURL: baseURL, apiKey: apiKey, session: .shared),
+                     appStateCache: try? .init(fileManager: .default))
     }
 
     static func testing(baseURL: URL, testData: TestData) -> Shared {
-        return .init(currencyService: .testing(baseURL: baseURL, testData: testData.currencyService))
+        return .init(currencyService: .testing(baseURL: baseURL, testData: testData.currencyService),
+                     appStateCache: try? .init(fileManager: .default))
     }
 }

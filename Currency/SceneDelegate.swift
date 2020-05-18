@@ -15,11 +15,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
     private typealias StoreType = Store<AppState>
-    private let store: StoreType = {
-        .init(initialState: .initial,
-              reducer: appReducer(state:action:),
-              middleware: [StoreType.createThunkMiddleware(), StoreType.createLoggerMiddleware()])
-    }()
+    private var store: StoreType?
 
     override init() {
         super.init()
@@ -35,8 +31,8 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             .liveQuotes: "usd_quotes"
         ]
         let testData = TestData(currencyService: currencyData)
-        //shared = .testing(baseURL: baseURL, testData: testData)
-        shared = .default(baseURL: baseURL, apiKey: apiKey)
+        shared = .testing(baseURL: baseURL, testData: testData)
+
         #else
         shared = .default(baseURL: baseURL, apiKey: apiKey)
         #endif
@@ -47,8 +43,16 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                willConnectTo session: UISceneSession,
                options connectionOptions: UIScene.ConnectionOptions) {
 
+        let loadedState: AppState? = try? shared?.appStateCache?.load()
+        var middleware: [Middleware<AppState>] = [createThunkMiddleware(), createLoggerMiddleware()]
+        if let cache = shared?.appStateCache { middleware.append(createCacheMiddleware(cache: cache)) }
+
+        store =  .init(initialState: loadedState ?? AppState.initial,
+                       reducer: appReducer(state:action:),
+                       middleware: middleware)
+
         // Create the SwiftUI view that provides the window contents.
-        let contentView = ExchangeRateView().environmentObject(store)
+        let contentView = ExchangeRateView().environmentObject(store!)
 
         // Use a UIHostingController as window root view controller.
         if let windowScene = scene as? UIWindowScene {

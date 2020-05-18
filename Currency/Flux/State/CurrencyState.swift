@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct CurrencyState: Equatable {
+struct CurrencyState: Equatable, Codable {
     var requestState: RequestState = .idle
     var currencyQuotes: CurrencyQuotes?
     var quotesTimestamp: TimeInterval?
@@ -16,12 +16,39 @@ struct CurrencyState: Equatable {
     var selectedCurrency: CurrencyIdentifier?
     var amount: Float?
     var result: [ExchangeResult] = []
+
+    enum CodingKeys: String, CodingKey {
+        case currencyQuotes
+        case quotesTimestamp
+        case currencies
+        case selectedCurrency
+        case amount
+        case result
+    }
+}
+
+extension CurrencyState {
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        currencyQuotes = try container.decodeIfPresent(CurrencyQuotes.self, forKey: .currencyQuotes)
+        quotesTimestamp = try container.decodeIfPresent(TimeInterval.self, forKey: .quotesTimestamp)
+        currencies = (try container.decodeIfPresent([CurrencyIdentifier].self, forKey: .currencies)) ?? []
+        selectedCurrency = try container.decodeIfPresent(CurrencyIdentifier.self, forKey: .selectedCurrency)
+        // ignoe the other properties
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encodeIfPresent(currencyQuotes, forKey: .currencyQuotes)
+        try container.encodeIfPresent(quotesTimestamp, forKey: .quotesTimestamp)
+        try container.encode(currencies, forKey: .currencies)
+        try container.encodeIfPresent(selectedCurrency, forKey: .selectedCurrency)
+    }
 }
 
 extension CurrencyState {
 
     enum RequestState: Equatable {
-
         case idle
         case fetching(CurrencyService.Endpoint)
         case error(Swift.Error)

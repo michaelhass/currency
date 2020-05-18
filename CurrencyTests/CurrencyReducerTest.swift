@@ -83,6 +83,63 @@ class CurrencyReducerTest: XCTestCase {
         XCTAssertTrue(updatedState.selectedCurrency == selectAction.currency)
         XCTAssertTrue(updatedState.requestState == initialState.requestState)
     }
+
+    func testUpdateRatesAction() {
+        let now = Date().timeIntervalSince1970
+        let quotesDict: [String: Float] = ["EURUSD": 0.9, "EURJPY": 1000, "EUREUR": 1]
+        let quotes = CurrencyQuotes(source: "EUR", timestamp: now, quotes: quotesDict)
+        let amount: Float = 530
+        let selectedCurrency = CurrencyIdentifier(abbr: "JPY", name: "Yen")
+        let currencies: [CurrencyIdentifier] = [
+            .init(abbr: "USD", name: "Dollar"),
+            selectedCurrency,
+            .init(abbr: "EUR", name: "EURO")
+        ]
+
+        let initialState = CurrencyState(
+            requestState: .idle,
+            currencyQuotes: quotes,
+            quotesTimestamp: now,
+            currencies: currencies,
+            selectedCurrency: selectedCurrency,
+            amount: amount, result: []
+        )
+
+        let updatedState = currencyReducer(state: initialState, action: CurrencyActions.UpdateRates())
+
+        XCTAssertFalse(updatedState.result.isEmpty)
+
+        // Check result orrder
+        let resultAbbr = updatedState.result.map(\.id) // id equals abbr
+        let currenciesAbbr = initialState.currencies.map(\.id)
+        let orderError = "Order of results should match the order of the initial currency list"
+        XCTAssertTrue(resultAbbr == currenciesAbbr, orderError)
+
+        let calculateExchangeRate = { (amount: Float, selectedRate: Float, targetRate: Float) -> Float in
+            return (1.0 / selectedRate) * targetRate * amount
+        }
+
+        // TEST: JPY -> USD
+        if let result = updatedState.result.first(where: { $0.id == "USD"}) {
+            XCTAssertTrue(result.exchangeAmount == calculateExchangeRate(amount, 1000, 0.9))
+        } else {
+            XCTFail("Could not find result for USD")
+        }
+
+        // TEST: JPY -> EUR
+        if let result = updatedState.result.first(where: { $0.id == "EUR"}) {
+            XCTAssertTrue(result.exchangeAmount == calculateExchangeRate(amount, 1000, 1))
+        } else {
+            XCTFail("Could not find result for JPY")
+        }
+
+        // TEST: JPY -> JPY
+        if let result = updatedState.result.first(where: { $0.id == "JPY"}) {
+            XCTAssertTrue(result.exchangeAmount == amount)
+        } else {
+            XCTFail("Could not find result for JPY")
+        }
+    }
 }
 
 extension CurrencyReducerTest {

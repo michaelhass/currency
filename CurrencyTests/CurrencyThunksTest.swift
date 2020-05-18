@@ -18,7 +18,7 @@ class CurrencyThunksTest: XCTestCase {
     private static func createStore() -> Store<AppState> {
         .init(initialState: .initial,
               reducer: appReducer(state:action:),
-              middleware: [Store<AppState>.createThunkMiddleware()])
+              middleware: [createThunkMiddleware()])
     }
 
     override func tearDownWithError() throws {
