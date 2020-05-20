@@ -45,7 +45,8 @@ extension CurrencyState {
         quotesTimestamp = try container.decodeIfPresent(TimeInterval.self, forKey: .quotesTimestamp)
         currencies = (try container.decodeIfPresent([CurrencyIdentifier].self, forKey: .currencies)) ?? []
         selectedCurrency = try container.decodeIfPresent(CurrencyIdentifier.self, forKey: .selectedCurrency)
-        // ignoe the other properties
+        amount = try container.decodeIfPresent(Float.self, forKey: .amount)
+        // Ignore result. Can be reconstructed from other properties
     }
 
     func encode(to encoder: Encoder) throws {
@@ -54,6 +55,8 @@ extension CurrencyState {
         try container.encodeIfPresent(quotesTimestamp, forKey: .quotesTimestamp)
         try container.encode(currencies, forKey: .currencies)
         try container.encodeIfPresent(selectedCurrency, forKey: .selectedCurrency)
+        try container.encodeIfPresent(amount, forKey: .amount)
+        // Ignore result. Can be reconstructed from other properties
     }
 }
 

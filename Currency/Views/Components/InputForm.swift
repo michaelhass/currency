@@ -22,7 +22,7 @@ protocol InputFormObserver {
 struct InputForm: View {
 
     // MARK: Bindings
-    @State private var enteredText: String = ""
+    @State private var enteredText: String
     @State private var showCancel: Bool = false
     @State private var isEditing: Bool = false
 
@@ -32,8 +32,11 @@ struct InputForm: View {
 
     // MARK: Init
 
-    init(observer: InputFormObserver) {
+    init(observer: InputFormObserver, initialValue: String = "") {
         self.observer = observer
+        self._enteredText = State(initialValue: initialValue)
+        self._showCancel =  State(initialValue: false)
+        self._isEditing =  State(initialValue: false)
     }
 
     // MARK: View Builder
@@ -43,6 +46,7 @@ struct InputForm: View {
     }
 
     func amountTextField() -> some View {
+
         let textBinding = Binding<String>.init(get: { () -> String in
             self.enteredText
         }, set: { text in
@@ -72,7 +76,6 @@ struct InputForm: View {
 
             if showCancel {
                 Button("Cancel") {
-                    self.enteredText = ""
                     self.showCancel = false
                     self.observer.editingCanceled()
                     UIApplication.shared.dismissKeyboard()

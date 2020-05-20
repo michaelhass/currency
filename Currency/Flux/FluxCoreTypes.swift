@@ -60,15 +60,19 @@ final class Store<State>: ObservableObject {
     }
 
     private lazy var dispatchFunction: DispatchFunction = {
-        let defaultDispatch: DispatchFunction = { [weak self] action in
-            guard let self = self else { return }
+        let defaultDispatch: DispatchFunction = { [unowned self] action in
+            //guard let self = self else { return }
             self.state = self.reducer(self.state, action)
+        }
+
+        let state: () -> State = { [unowned self] in
+            return self.state
         }
 
         return middleware
             .reversed()
             .reduce(defaultDispatch) { (dispatch, middleWare) in
-                middleWare(dispatch, { self.state })
+                middleWare(dispatch, state)
         }
     }()
 }

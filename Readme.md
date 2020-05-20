@@ -1,6 +1,6 @@
 # Currency
 
-Exchange rate view viewer. Playground for testing SwiftUI,  Redux & Combine.
+Exchange rate  viewer. Playground for testing SwiftUI,  Redux & Combine.
  
 <img src="Images/screenshot_phone.png" width="150">
 

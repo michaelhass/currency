@@ -12,22 +12,9 @@ struct ExchangeRateView: View {
 
     // MARK: Bindings
     @EnvironmentObject var store: Store<AppState>
-
-    @State private var showPicker: Bool = false
-    @State private var selectedCurrency: CurrencyIdentifier?
     @State private var attributes: Attributes = .init(currencyState: nil)
 
-    @State private var currencies: [CurrencyIdentifier] = []
-    @State private var results: [ExchangeResult] = []
-
     // MARK: View properties
-
-    private static let numberFormatter: NumberFormatter = {
-         let numberFormatter = NumberFormatter()
-        numberFormatter.minimumFractionDigits = 2
-        numberFormatter.maximumFractionDigits = 2
-        return numberFormatter
-    }()
 
     private let cornerRadius: CGFloat = 6
 
@@ -39,18 +26,18 @@ struct ExchangeRateView: View {
             }.navigationBarTitle("Exchange rates", displayMode: .large)
 
         }.onAppear {
-            // Refresh currencies after 60 minutes.
-            let isExpired = self.store.state.currencyState.quotesTimestamp?.isOlderThan(minutes: 60) ?? false
-            guard self.currencies.isEmpty || isExpired else { return }
-            shared
+            if self.attributes.shouldUpdateCurrencies {
+                shared
                 .map(\.currencyService)
                 .map(CurrencyActions.requestCurrencies(service:))
                 .map(self.store.dispatch(action:))
+            }
+
+            if self.attributes.canCalculateResult {
+                self.store.dispatch(action: CurrencyActions.UpdateRates())
+            }
 
         }.onReceive(store.$state) { state in
-            self.currencies = state.currencyState.currencies
-            self.results = state.currencyState.result
-            self.selectedCurrency = state.currencyState.selectedCurrency
             self.attributes = Attributes(currencyState: state.currencyState)
         }
     }
@@ -58,7 +45,7 @@ struct ExchangeRateView: View {
     func content() -> some View {
         ZStack {
             List {
-                ForEach(self.results, id: \.id, content: resultView(for:))
+                ForEach(self.attributes.results, id: \.id, content: resultView(for:))
 
             }.listStyle(PlainListStyle()).gesture(DragGesture().onChanged({ _  in
                 UIApplication.shared.dismissKeyboard()
@@ -70,9 +57,8 @@ struct ExchangeRateView: View {
     }
 
     func resultView(for result: ExchangeResult) -> some View {
-        let exchangeAmount = ExchangeRateView.numberFormatter.string(from: NSNumber(value: result.exchangeAmount)) ?? ""
         return VStack(alignment: .leading, spacing: 4) {
-            Text("\(result.currency.abbr) \(exchangeAmount)")
+            Text("\(result.currency.abbr) \(attributes.numberString(for: result.exchangeAmount))")
                 .lineLimit(1)
             Text("\(result.currency.name)")
                 .font(.caption)
@@ -82,19 +68,20 @@ struct ExchangeRateView: View {
 
     func header() -> some View {
         VStack {
-            InputForm(observer: Observer(dispatch: store.dispatch(action:),
-                                         selectedCurrency: self.selectedCurrency))
+            InputForm(
+                observer: Observer(dispatch: store.dispatch(action:),
+                                   selectedCurrency: self.attributes.selectedCurrency),
+                initialValue: self.attributes.initialInputValue
+            )
 
             HStack {
-                Button(selectedCurrency?.abbr ?? "Select currency") {
-                    self.showPicker.toggle()
+                Button(self.attributes.selectedCurrency?.abbr ?? "Select currency") {
+                    self.attributes.showPicker.toggle()
                 }
                 .disabled(attributes.isCurrencySelectDisabled)
-                .sheet(isPresented: $showPicker) {
-                    CurrencyPicker(currencies: self.currencies) { currency in
-                        self.selectedCurrency = currency
-                        // dispatch
-                        self.showPicker = false
+                .sheet(isPresented: $attributes.showPicker) {
+                    CurrencyPicker(currencies: self.attributes.currencies) { currency in
+                        self.attributes.showPicker = false
 
                         self.store.dispatch(action: CurrencyActions.SetSelectedCurrency(currency: currency))
 
@@ -131,73 +118,6 @@ struct ExchangeRateView: View {
             }
 
             Spacer()
-        }
-    }
-}
-
-extension ExchangeRateView {
-
-    struct Attributes {
-        let currencyState: CurrencyState?
-
-        var isCurrencySelectDisabled: Bool {
-            currencyState.map(\.currencies.isEmpty) ?? false
-        }
-
-        var isSendDisabled: Bool {
-            isCurrencySelectDisabled || currencyState?.selectedCurrency == nil
-        }
-
-        var message: String {
-            switch currencyState?.requestState {
-            case .fetching?:
-                return "Updating data"
-            case .error(let error):
-                if case .errorResponse(let response)? = error as? CurrencyService.Error {
-                    return response.info
-                }
-                return "Oh no, an error occured."
-            default:
-                return ""
-            }
-        }
-    }
-
-    private struct Observer: InputFormObserver {
-        private let dispatch: DispatchFunction
-        private let selectedCurrency: CurrencyIdentifier?
-
-        init(dispatch: @escaping DispatchFunction,
-             selectedCurrency: CurrencyIdentifier?) {
-            self.selectedCurrency = selectedCurrency
-            self.dispatch = dispatch
-        }
-
-        func editingStarted() {
-            // Do nothing
-        }
-
-        func editingEnded(text: String) {
-            requestRates(amountText: text)
-        }
-
-        func editingCanceled() {
-            // Do nothing
-        }
-
-        func textChanged(text: String) {
-            requestRates(amountText: text)
-        }
-
-        private func requestRates(amountText: String) {
-            Float(amountText)
-                .map(CurrencyActions.SetAmount.init(amount:))
-                .map(dispatch)
-
-            shared
-                .map(\.currencyService)
-                .map { CurrencyActions.requestRates(service: $0) }
-                .map(dispatch)
         }
     }
 }

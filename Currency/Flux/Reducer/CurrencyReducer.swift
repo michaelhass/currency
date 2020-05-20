@@ -8,6 +8,7 @@
 
 import Foundation
 
+// swiftlint:disable cyclomatic_complexity
 func currencyReducer(state: CurrencyState, action: Action) -> CurrencyState {
 
     var state = state
@@ -64,3 +65,4 @@ func currencyReducer(state: CurrencyState, action: Action) -> CurrencyState {
     }
     return state
 }
+// swiftlint:enable cyclomatic_complexity
