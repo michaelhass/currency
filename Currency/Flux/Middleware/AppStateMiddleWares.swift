@@ -21,7 +21,7 @@ func createLoggerMiddleware() -> Middleware<AppState> {
             print("[LOG] - \(action)")
             print("[LOG]")
             print("[LOG] - current state:")
-            print("[LOG] - \(state())")
+            print("[LOG] - \(String(describing: state()))")
             print("[LOG]")
             print("[LOG] -------")
             print()

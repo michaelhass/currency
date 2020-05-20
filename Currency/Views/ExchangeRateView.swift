@@ -28,9 +28,9 @@ struct ExchangeRateView: View {
         }.onAppear {
             if self.attributes.shouldUpdateCurrencies {
                 shared
-                .map(\.currencyService)
-                .map(CurrencyActions.requestCurrencies(service:))
-                .map(self.store.dispatch(action:))
+                    .map(\.currencyService)
+                    .map(CurrencyActions.requestCurrencies(service:))
+                    .map(self.store.dispatch(action:))
             }
 
             if self.attributes.canCalculateResult {
@@ -38,7 +38,7 @@ struct ExchangeRateView: View {
             }
 
         }.onReceive(store.$state) { state in
-            self.attributes = Attributes(currencyState: state.currencyState)
+            self.attributes = Attributes(currencyState: state?.currencyState)
         }
     }
 
@@ -57,13 +57,13 @@ struct ExchangeRateView: View {
     }
 
     func resultView(for result: ExchangeResult) -> some View {
-        return VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: 4) {
             Text("\(result.currency.abbr) \(attributes.numberString(for: result.exchangeAmount))")
                 .lineLimit(1)
             Text("\(result.currency.name)")
                 .font(.caption)
                 .lineLimit(1)
-            }
+        }
     }
 
     func header() -> some View {
@@ -95,11 +95,12 @@ struct ExchangeRateView: View {
 
                 Spacer()
 
-                .disabled(attributes.isSendDisabled)
+                    .disabled(attributes.isSendDisabled)
             }.padding(0) // Remove padding from HStack
         }
     }
-    /// Returns a view with displaying the given text
+
+    /// Returns a view displaying the given text
     func message(text: String) -> some View {
         VStack {
             Spacer(minLength: 80)

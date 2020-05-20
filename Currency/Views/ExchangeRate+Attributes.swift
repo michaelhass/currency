@@ -12,11 +12,11 @@ extension ExchangeRateView {
     struct Attributes {
 
         private static let numberFormatter: NumberFormatter = {
-              let numberFormatter = NumberFormatter()
-             numberFormatter.minimumFractionDigits = 2
-             numberFormatter.maximumFractionDigits = 2
-             return numberFormatter
-         }()
+            let numberFormatter = NumberFormatter()
+            numberFormatter.minimumFractionDigits = 2
+            numberFormatter.maximumFractionDigits = 2
+            return numberFormatter
+        }()
 
         let currencyState: CurrencyState?
         var showPicker: Bool = false

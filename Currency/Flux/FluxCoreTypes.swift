@@ -33,7 +33,7 @@ typealias RetrieveState<State> = () -> State?
 /// Place where your Application State is stored. Accepts actions and passes them to the reducers.
 final class Store<State>: ObservableObject {
 
-    @Published private(set) var state: State
+    @Published private(set) var state: State?
     private let reducer: Reducer<State>
     private let middleware: [Middleware<State>]
 
@@ -42,7 +42,7 @@ final class Store<State>: ObservableObject {
     /// - Parameters:
     ///   - initialState: The application's root state
     ///   - reducer: The root reducer to use
-    init(initialState: State,
+    init(initialState: State?,
          reducer: @escaping Reducer<State>,
          middleware: [Middleware<State>]) {
 
@@ -63,19 +63,18 @@ final class Store<State>: ObservableObject {
     }
 
     private lazy var dispatchFunction: DispatchFunction = {
-        let defaultDispatch: DispatchFunction = { [weak self] action in
-            guard let self = self else { return }
-            self.state = self.reducer(self.state, action)
+        let retrieveState: RetrieveState = { [weak self] in
+            self?.state
         }
 
-        let state: RetrieveState = { [weak self] in
-            self?.state
+        let defaultDispatch: DispatchFunction = { [weak self] action in
+            self?.state = self?.reducer(retrieveState(), action)
         }
 
         return middleware
             .reversed()
             .reduce(defaultDispatch) { (dispatch, middleWare) in
-                middleWare(dispatch, state)
+                middleWare(dispatch, retrieveState)
         }
     }()
 }

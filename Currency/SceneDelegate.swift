@@ -38,9 +38,9 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let baseURL = URL(string: "https://duckduckgo.com/")!
 
         let currencyData: [CurrencyService.Endpoint: String] = [
-                .currencyList: "currencies",
-                .liveQuotes: "usd_quotes"
-            ]
+            .currencyList: "currencies",
+            .liveQuotes: "usd_quotes"
+        ]
         let testData = TestData(currencyService: currencyData)
         return .testing(baseURL: baseURL, testData: testData)
     }
@@ -55,11 +55,11 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                willConnectTo session: UISceneSession,
                options connectionOptions: UIScene.ConnectionOptions) {
 
-        let loadedState: AppState? = try? shared?.appStateCache?.load()
+        let cachedState: AppState? = try? shared?.appStateCache?.load()
         var middleware: [Middleware<AppState>] = [createThunkMiddleware(), createLoggerMiddleware()]
         if let cache = shared?.appStateCache { middleware.append(createCacheMiddleware(cache: cache)) }
 
-        store =  .init(initialState: loadedState ?? AppState.initial,
+        store =  .init(initialState: cachedState,
                        reducer: appReducer(state:action:),
                        middleware: middleware)
 
