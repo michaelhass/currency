@@ -9,9 +9,9 @@
 import Foundation
 
 // swiftlint:disable cyclomatic_complexity
-func currencyReducer(state: CurrencyState, action: Action) -> CurrencyState {
+func currencyReducer(state: CurrencyState?, action: Action) -> CurrencyState {
 
-    var state = state
+    var state = state ?? CurrencyState()
 
     switch action {
     case let fetchAction as CurrencyActions.SetFetching:
@@ -63,6 +63,7 @@ func currencyReducer(state: CurrencyState, action: Action) -> CurrencyState {
     default:
         break
     }
+
     return state
 }
 // swiftlint:enable cyclomatic_complexity

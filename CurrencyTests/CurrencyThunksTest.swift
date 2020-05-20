@@ -82,7 +82,7 @@ class CurrencyThunksTest: XCTestCase {
         _ = store.$state
             .subscribe(on: DispatchQueue.main)
             .sink(receiveValue: { updatedState in
-                switch updatedState.currencyState.requestState {
+                switch updatedState.currencyState?.requestState {
                 case .fetching(let value) where value == endpoint:
                     expectFetching.fulfill()
                 case .error:
@@ -105,7 +105,7 @@ class CurrencyThunksTest: XCTestCase {
         _ = store.$state
             .subscribe(on: DispatchQueue.main)
             .sink(receiveValue: { updatedState in
-                switch updatedState.currencyState.requestState {
+                switch updatedState.currencyState?.requestState {
                 case .fetching(let value) where value == endpoint:
                     expectFetching.fulfill()
                 case .success(let value) where value == endpoint:

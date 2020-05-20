@@ -8,8 +8,8 @@
 
 import Foundation
 
-func appReducer(state: AppState, action: Action) -> AppState {
-    var state = state
+func appReducer(state: AppState?, action: Action) -> AppState {
+    var state = state ?? AppState()
     state.currencyState = currencyReducer(state: state.currencyState, action: action)
     return state
 }

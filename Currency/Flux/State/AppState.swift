@@ -9,9 +9,9 @@
 import Foundation
 
 struct AppState: Equatable, Codable {
-    var currencyState: CurrencyState
+    var currencyState: CurrencyState?
 
     static var initial: AppState {
-        .init(currencyState: .init())
+        .init(currencyState: nil)
     }
 }

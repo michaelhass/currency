@@ -57,7 +57,7 @@ func createCacheMiddleware(cache: AppStateCache) -> Middleware<AppState> {
         return { action in
             dispatch(action)
             do {
-                try cache.store(state())
+                try state().map(cache.store)
             } catch {
                 #if DEBUG
                     print(error)

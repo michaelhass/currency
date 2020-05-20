@@ -14,18 +14,21 @@ protocol Action { }
 
 /// An action that may perform side effects and dispatch other actions.
 struct Thunk<State>: Action {
-    let body: (_ dispatch: @escaping DispatchFunction, _ state: @escaping () -> State) -> Void
+    let body: (_ dispatch: @escaping DispatchFunction, _ state: @escaping RetrieveState<State>) -> Void
 }
 
 /// A handler for executing side effects when dispatching actions.
-typealias Middleware<State> = (_ dispatch: @escaping DispatchFunction, _ state: @escaping () -> State)
+typealias Middleware<State> = (_ dispatch: @escaping DispatchFunction, _ state: @escaping RetrieveState<State>)
     -> DispatchFunction
 
 /// Only place where state updates should occure.
-typealias Reducer<State> = (_ state: State, _ action: Action) -> State
+typealias Reducer<State> = (_ state: State?, _ action: Action) -> State
 
 /// Function to dispatch actions on
 typealias DispatchFunction = (_ action: Action) -> Void
+
+/// Function for retrieving the curren application state
+typealias RetrieveState<State> = () -> State?
 
 /// Place where your Application State is stored. Accepts actions and passes them to the reducers.
 final class Store<State>: ObservableObject {
@@ -60,13 +63,13 @@ final class Store<State>: ObservableObject {
     }
 
     private lazy var dispatchFunction: DispatchFunction = {
-        let defaultDispatch: DispatchFunction = { [unowned self] action in
-            //guard let self = self else { return }
+        let defaultDispatch: DispatchFunction = { [weak self] action in
+            guard let self = self else { return }
             self.state = self.reducer(self.state, action)
         }
 
-        let state: () -> State = { [unowned self] in
-            return self.state
+        let state: RetrieveState = { [weak self] in
+            self?.state
         }
 
         return middleware

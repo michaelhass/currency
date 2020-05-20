@@ -19,7 +19,7 @@ struct CurrencyActions {
     static func requestCurrencies(service: CurrencyService) -> Thunk<AppState> {
         .init { (dispatch, state) in
             let endpoint = CurrencyService.Endpoint.currencyList
-            if case .fetching(endpoint) = state().currencyState.requestState {
+            if case .fetching(endpoint) = state()?.currencyState?.requestState {
                 return
             }
 
@@ -39,14 +39,14 @@ struct CurrencyActions {
 
         .init { (dispatch, state) in
 
-            let currencyState: CurrencyState = state().currencyState
+            let currencyState: CurrencyState? = state()?.currencyState
             let endpoint = CurrencyService.Endpoint.liveQuotes
 
-            if case .fetching(endpoint) = currencyState.requestState {
+            if case .fetching(endpoint) = currencyState?.requestState {
                 return
             }
 
-            if currencyState.quotesTimestamp.map({ !$0.isOlderThan(minutes: 30) }) ?? false {
+            if currencyState.flatMap(\.quotesTimestamp).map({ !$0.isOlderThan(minutes: 30) }) ?? false {
                 dispatch(UpdateRates())
 
             } else { // Request new qupotes
