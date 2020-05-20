@@ -83,6 +83,5 @@ extension CurrencyState {
                 return false
             }
         }
-
     }
 }

@@ -95,7 +95,6 @@ struct ExchangeRateView: View {
 
                 Spacer()
 
-                    .disabled(attributes.isSendDisabled)
             }.padding(0) // Remove padding from HStack
         }
     }

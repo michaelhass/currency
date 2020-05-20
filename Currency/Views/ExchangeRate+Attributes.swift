@@ -37,10 +37,6 @@ extension ExchangeRateView {
             currencyState.map(\.currencies.isEmpty) ?? false
         }
 
-        var isSendDisabled: Bool {
-            isCurrencySelectDisabled || currencyState?.selectedCurrency == nil
-        }
-
         var message: String {
             switch currencyState?.requestState {
             case .fetching?:
@@ -64,7 +60,7 @@ extension ExchangeRateView {
         }
 
         func numberString(for value: Float) -> String {
-            Attributes.numberFormatter.string(from: .init(value: value)) ?? ""
+            Self.numberFormatter.string(from: .init(value: value)) ?? ""
         }
 
         var initialInputValue: String {

@@ -89,6 +89,7 @@ struct InputForm: View {
 }
 
 struct InputForm_Previews: PreviewProvider {
+
     private struct Observer: InputFormObserver {
         func editingEnded(text: String) {}
         func editingStarted() {}

@@ -12,7 +12,7 @@ struct CurrencyList: Codable, Equatable, CustomStringConvertible {
     let currencies: [String: String]
 
     var description: String {
-        return "currencies: \(currencies.shortDescriptor(maxElements: 3))"
+        "currencies: \(currencies.shortDescriptor(maxElements: 3))"
     }
 }
 

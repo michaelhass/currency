@@ -21,12 +21,12 @@ struct TestData {
 
 extension Shared {
 
-    static func `default`(baseURL: URL, apiKey: String) -> Shared {
+    static func `default`(baseURL: URL, apiKey: String) -> Self {
         return .init(currencyService: .init(baseURL: baseURL, apiKey: apiKey, session: .shared),
                      appStateCache: try? .init(fileManager: .default))
     }
 
-    static func testing(baseURL: URL, testData: TestData) -> Shared {
+    static func testing(baseURL: URL, testData: TestData) -> Self {
         return .init(currencyService: .testing(baseURL: baseURL, testData: testData.currencyService),
                      appStateCache: try? .init(fileManager: .default))
     }
