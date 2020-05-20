@@ -9,20 +9,18 @@ Exchange rate  viewer. Playground for testing SwiftUI,  Redux & Combine.
 Get an API Key from [currencylayer.com](https://currencylayer.com) and paste it in the file SceneDelegate.swift and start the app.
 
 ```
-   
-    // Use either the standard shared object that communicates
-    // Remotely with every registered service.
+// Use either the standard shared object that communicates
+// with every registered remote service.
 
-     let apiKey = "YOUR_KEY"
-     shared = defaultShared(withKey: apiKey)
+let apiKey = "YOUR_KEY"
+shared = defaultShared(withKey: apiKey)
 
-     // OR
+// OR
 
-     // Use the testing evironment.
-     // Responses are in the directory 'Mocking'
+// Use the testing environment.
+// Responses are in the directory 'Mocking'
 
-     // shared = testShared()
-    
+//shared = testShared()    
 ```
 
 ## Features

@@ -21,14 +21,14 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         super.init()
 
         // Use either the standard shared object that communicates
-        // Remotely with every registered service.
+        // with every registered remote service.
 
         let apiKey = "YOUR_KEY"
         shared = defaultShared(withKey: apiKey)
 
         // OR
 
-        // Use the testing evironment.
+        // Use the testing environment.
         // Responses are in the directory 'Mocking'
 
         //shared = testShared()
